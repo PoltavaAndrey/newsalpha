@@ -1,0 +1,31 @@
+run:
+  name: aapl_2024
+  seed: 42
+
+company:
+  name: Apple Inc.
+  tickers: [AAPL]
+  aliases: ["Apple", "iPhone maker"]
+
+period: {start: 2024-01-01, end: 2024-12-31}
+
+pipeline:
+  news_sources:
+    - {plugin: rss, params: {feeds: ["https://..."]}}
+  market_sources:
+    - {plugin: yfinance, params: {interval: 1d}}
+  text_processors:
+    - {plugin: cleaner}
+    - {plugin: language_filter, params: {allow: [en]}}
+    - {plugin: deduplicator, params: {threshold: 0.9}}
+    - {plugin: entity_linker}
+  sentiment:
+    - {plugin: lexicon}
+    - {plugin: transformer, params: {model: ProsusAI/finbert}}
+  analyzers:
+    - {plugin: event_study, params: {window: [-1, 5], estimation_window: 120}}
+    - {plugin: lagged_correlation, params: {max_lag: 5}}
+    - {plugin: granger, params: {max_lag: 5}}
+  exporters:
+    - {plugin: parquet}
+    - {plugin: csv, params: {path: data/marts}}
