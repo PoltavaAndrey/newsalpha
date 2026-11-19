@@ -53,6 +53,15 @@ class Article(_Frozen):
     language: str | None = None
     tickers: tuple[str, ...] = ()
 
+    @field_validator("published_at")
+    @classmethod
+    def _ensure_utc(cls, v: datetime) -> datetime:
+        # Reject naive datetimes: we cannot guess their timezone.
+        if v.tzinfo is None:
+            raise ValueError("published_at must be timezone-aware")
+        # Normalize any offset (e.g. +03:00) to UTC.
+        return v.astimezone(timezone.utc)
+
 
 class SentimentScore(_Frozen):
     article_id: str
