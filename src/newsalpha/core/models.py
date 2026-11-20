@@ -4,7 +4,7 @@ from datetime import date, datetime, timezone
 from typing import Annotated, Any, Literal
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator, field_validator
 
 
 def _ensure_utc(dt: datetime) -> datetime:
@@ -53,15 +53,6 @@ class Article(_Frozen):
     language: str | None = None
     tickers: tuple[str, ...] = ()
 
-    @field_validator("published_at", "fetched_at")
-    @classmethod
-    def _ensure_utc(cls, v: datetime) -> datetime:
-        # Reject naive datetimes: we cannot guess their timezone.
-        if v.tzinfo is None:
-            raise ValueError("published_at must be timezone-aware")
-        # Normalize any offset (e.g. +03:00) to UTC.
-        return v.astimezone(timezone.utc)
-
 
 class SentimentScore(_Frozen):
     article_id: str
@@ -80,12 +71,12 @@ class PriceBar(_Frozen):
     close: float
     volume: float | None = None
 
-    @field_validator("high", "low")
+    @model_validator(mode="after")
     @classmethod
-    def _check_price(cls, v: float, info: Any) -> float:
-        if info.data["low"] > info.data["high"]:
+    def _check_price(self) -> "PriceBar":
+        if self.low > self.high:
             raise ValueError("low must be <= high")
-        return v
+        return self
 
 
 class NewsQuery(_Frozen):

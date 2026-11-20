@@ -1,7 +1,7 @@
 import pytest
 
-from newsalpha.core.errors import DuplicatePluginError, PluginNotFoundError
-from newsalpha.core.registry import PluginRegistry
+from src.newsalpha.core.errors import DuplicatePluginError, PluginNotFoundError
+from src.newsalpha.core.registry import PluginRegistry
 
 
 def make_registry():

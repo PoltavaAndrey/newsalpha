@@ -3,7 +3,7 @@ from datetime import date, datetime, timezone, timedelta
 import pytest
 from pydantic import ValidationError
 
-from newsalpha.core.models import Article, NewsQuery, SentimentScore, make_article_id, PriceBar
+from src.newsalpha.core.models import Article, NewsQuery, SentimentScore, make_article_id, PriceBar
 
 
 def test_article_id_ignores_tracking_and_case():
