@@ -1,2 +1,4 @@
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+# сделать пакет устанавливаемым (pip install -e .)

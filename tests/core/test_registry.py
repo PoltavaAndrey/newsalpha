@@ -18,6 +18,19 @@ def make_registry():
     return reg
 
 
+def test_runtime_check_does_not_validate_signature():
+    reg = PluginRegistry()
+
+    @reg.register("news_source", "bad_signature")
+    class BadSignature:
+        def fetch(self): # wrong: no query and ctx parameters 
+            ...
+    
+    source = reg.create("news_source", "bad_signature")
+
+    with pytest.raises(TypeError):
+        source.fetch("query", "ctx")
+
 def test_create_with_params_and_name_injected():
     reg = make_registry()
     src = reg.create("news_source", "fake", n=3)
