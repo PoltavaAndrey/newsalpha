@@ -1,7 +1,7 @@
 import pytest
 
-from src.newsalpha.core.config import load_config
-from src.newsalpha.core.errors import ConfigError
+from newsalpha.core.config import load_config
+from newsalpha.core.errors import ConfigError
 
 BASE = """
 run: {name: demo}

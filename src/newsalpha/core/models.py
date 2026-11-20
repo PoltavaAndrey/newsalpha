@@ -72,7 +72,6 @@ class PriceBar(_Frozen):
     volume: float | None = None
 
     @model_validator(mode="after")
-    @classmethod
     def _check_price(self) -> "PriceBar":
         if self.low > self.high:
             raise ValueError("low must be <= high")
