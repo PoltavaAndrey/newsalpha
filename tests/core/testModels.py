@@ -3,7 +3,7 @@ from datetime import date, datetime, timezone, timedelta
 import pytest
 from pydantic import ValidationError
 
-from newsalpha.core.models import Article, NewsQuery, SentimentScore, make_article_id
+from newsalpha.core.models import Article, NewsQuery, SentimentScore, make_article_id, PriceBar
 
 
 def test_article_id_ignores_tracking_and_case():
@@ -34,9 +34,14 @@ def test_models_are_frozen():
 
 def test_score_range():
     with pytest.raises(ValidationError):
-        SentimentScore(article_id="1", model="m", label="pos", score=1.5)
+        SentimentScore(article_id="1", model="m", label="pos", score=2)
 
 
 def test_query_period_validation():
     with pytest.raises(ValidationError):
         NewsQuery(start=date(2024, 2, 1), end=date(2024, 1, 1))
+
+
+def test_price_bar_low_high_validation():
+    with pytest.raises(ValidationError):
+        PriceBar(ticker="AAPL", ts=datetime.now(timezone.utc), open=100, high=90, low=95, close=92)

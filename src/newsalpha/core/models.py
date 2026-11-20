@@ -53,7 +53,7 @@ class Article(_Frozen):
     language: str | None = None
     tickers: tuple[str, ...] = ()
 
-    @field_validator("published_at")
+    @field_validator("published_at", "fetched_at")
     @classmethod
     def _ensure_utc(cls, v: datetime) -> datetime:
         # Reject naive datetimes: we cannot guess their timezone.
@@ -79,6 +79,13 @@ class PriceBar(_Frozen):
     low: float
     close: float
     volume: float | None = None
+
+    @field_validator("high", "low")
+    @classmethod
+    def _check_price(cls, v: float, info: Any) -> float:
+        if info.data["low"] > info.data["high"]:
+            raise ValueError("low must be <= high")
+        return v
 
 
 class NewsQuery(_Frozen):
