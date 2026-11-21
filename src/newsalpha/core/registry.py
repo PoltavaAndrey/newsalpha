@@ -3,7 +3,7 @@ import importlib
 from collections.abc import Callable, Iterable
 from typing import Any, TypeVar
 
-from newsalpha.core.errors import DuplicatePluginError, PluginNotFoundError
+from newsalpha.core.errors import DuplicatePluginError, PluginNotFoundError, PluginInterfaceError, PluginInitError
 from newsalpha.core.interfaces import PROTOCOLS
 
 T = TypeVar("T", bound=type)
@@ -39,9 +39,14 @@ class PluginRegistry:
 
     def create(self, kind: str, name: str, **params: Any) -> Any:
         """Factory: creates an instance and checks that it satisfies the interface."""
-        instance = self.get(kind, name)(**params)
+        cls = self.get(kind, name)
+        try:
+            instance = cls(**params)
+        except TypeError as e:
+            raise PluginInitError(f"Cannot create {kind} plugin {name!r} with params {params}: {e}") from e
+
         if not isinstance(instance, PROTOCOLS[kind]):
-            raise TypeError(f"{name!r} does not satisfy the {kind} interface")
+            raise PluginInterfaceError(f"{name!r} does not satisfy the {kind} interface")
         return instance
 
     def names(self, kind: str) -> list[str]:

@@ -1,6 +1,6 @@
 import pytest
 
-from newsalpha.core.errors import DuplicatePluginError, PluginNotFoundError
+from newsalpha.core.errors import DuplicatePluginError, PluginNotFoundError, PluginInterfaceError, PluginInitError
 from newsalpha.core.registry import PluginRegistry
 
 
@@ -61,5 +61,12 @@ def test_interface_check_on_create():
     class Broken:  # there is no fetch method
         pass
 
-    with pytest.raises(TypeError):
+    with pytest.raises(PluginInterfaceError):
         reg.create("news_source", "broken")
+ 
+
+def test_wrong_init_params():
+    reg = make_registry()
+
+    with pytest.raises(PluginInitError):
+        reg.create("news_source", "fake", wrong_param=1)

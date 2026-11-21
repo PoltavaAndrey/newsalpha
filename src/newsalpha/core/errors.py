@@ -15,3 +15,11 @@ class PluginNotFoundError(NewsAlphaError):
 
 class DuplicatePluginError(NewsAlphaError):
     """Two plugins registered under the same (kind, name)."""
+
+
+class PluginInterfaceError(NewsAlphaError):
+    """Plugin class does not satisfy the interface of its kind."""
+
+
+class PluginInitError(NewsAlphaError):
+    """Plugin could not be created with the given params."""
