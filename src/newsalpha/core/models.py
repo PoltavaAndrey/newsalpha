@@ -100,3 +100,11 @@ class AnalysisResult(_Frozen):
     metrics: dict[str, float] = Field(default_factory=dict)
     details: dict[str, Any] = Field(default_factory=dict)
     summary: str = ""
+
+
+class PluginFailure(_Frozen):
+    """One plugin error that was skipped under the skip_and_log policy."""
+
+    stage: str
+    plugin: str
+    error: str
