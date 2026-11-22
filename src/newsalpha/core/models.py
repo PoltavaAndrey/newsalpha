@@ -69,6 +69,7 @@ class PriceBar(_Frozen):
     high: float
     low: float
     close: float
+    adj_close: float | None = None
     volume: float | None = None
 
     @model_validator(mode="after")
